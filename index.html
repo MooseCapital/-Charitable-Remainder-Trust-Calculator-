@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Charitable Remainder Trust</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="app.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js" integrity="sha512-ElRFoEQdI5Ht6kZvyzXhYG9NqjtkmlkfYk0wr6wHxU9JEHakS7UJZNeml5ALk+8IKlU6jDgMabC3vkumRokgJA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+</head>
+<body>
+    <div id="app">
+        <header class="header">
+            <div class="headtitle">Charitable Remainder Unitrust</div>
+        </header>
+        <section id="sidebar">
+            <button class="howtoopen">How to Use</button>
+            <form id="trust_form" >
+                <label for="capitalgains" title="Amount over $250,000" >
+                    Capital Gains
+                    <br>
+                    <input type="number" id="capitalgains"  value="500000"  name="capitalgains" required min="250000">
+
+                </label>
+                <label for="apy" title="return Percent per year">
+                    APY %
+                    <br>
+                    <input type="number" id="apy" step="1"  name="annual_percentage_yield" required value="4" >
+                </label>
+                <label for="payments" title="percent of payments to us per year 5 - 50%">
+                    Payments %
+                    <br>
+                    <input type="number" id="payments" step="1"  name="payments" required min="5" max="50" value="8">
+                </label>
+                <label for="length" title="Term of Trust 1 - 20 years" >
+                    Length of Trust
+                    <br>
+                    <input type="number" id="length" step="1"  name="length_of_trust" required min="1" max="20" value="20">
+                </label>
+
+                <div id="crutselection">
+                        <label for="radiocrut" >
+                            Crut
+                            <input type="radio" id="radiocrut"  name="crut_type" required checked>
+                        </label>
+                        <label for="radioflipcrut" title="Grows for x years to compound, payments not taken out of principle until flip year">
+                            Flipcrut
+                            <input type="radio" id="radioflipcrut"  name="crut_type" >
+                        </label>
+                </div>
+
+                <label for="yearsuntilflip">
+                    Years Until Flip
+                    <br>
+                    <input  id="yearsuntilflip" type="number" step="1"   name="years_until_flip" required value="5" disabled>
+                </label>
+
+                <button type="submit" id="calculate">Calculate</button>
+            </form>
+        </section>
+        <section id="maincontent">
+            <div class="topcontainer">
+                <div id="chart-container">
+                    <canvas id="trust-chart"  width="1200px" height="400px" ></canvas>
+                </div>
+            </div>
+            <div class="bottomContainer">
+                <div class="infotitles" style="display: none">
+                    <div id="principle-title">Principle</div>
+                    <div id="taxpaid-title">Total Tax</div>
+                    <div id="taxrate-title" title="This is the federal tax rate, while the chart includes this + an average 5% state tax for the tax payment">Highest Tax Rate</div>
+                    <div id="payments-title">Avg Yearly Payment</div>
+                    <div id="totalpayments-title">Total Payments</div>
+                </div>
+            </div>
+        </section>
+        <section class="How-to-use" style="display: none">
+                <div class="howtoform">
+                    <div class="howtoheader">
+                        <div class="howtotitle">How to Use</div>
+                        <div class="howtoexit trustclose"></div>
+                    </div>
+                    <div>Read all about Charitable Remainder Trust at the great resources provided by  <a href="https://learn.valur.io/charitable-remainder-trust/" target="_blank" rel="noopener noreferrer">Valur</a></div>
+                    <div class="howmidtitle">Sidebar</div>
+                    <div>
+                        <span class="howtosubtitle">Capital Gains </span>
+                      -  the amount of profit from the asset donated or sold. Ex. $100,000 of shares/crypto bought, then sold for $1,000,000. You would type the full amount + principle since it is all donated to the CRT
+                    </div>
+                    <div>
+                        <span class="howtosubtitle">APY</span>
+                      -  The amount you expect your money to grow per year. we put 4% as a very safe default.
+                    </div>
+                    <div>
+                        <span class="howtosubtitle">Payments %</span>
+                      -  The amount you will withdraw per year. Calculations must be made to ensure the charity gets 10% of the initial amount donated.
+                        You want a good ratio of maximizing payments while minimizing taxes per year. Ex. making 12% could mean getting $30k more over the term, but you are now
+                        paid more in the top tax bracket at the beginning years, so a middle ground is better, while this gives much more to charity due to compounding.
+                    </div>
+                    <div>
+                        <span class="howtosubtitle">Length of Trust</span>
+                    -    The time until the trust expires and donates leftover money to the charity or DAF of choice. longer is better due to compounding.
+                        we default to 20 years (max length) to grow the most, although most people will want to choose a life term which last until death.
+                        this is only available to those over 27.5 and we cannot measure a variable amount of years, so we stick with 20 to show the simple difference
+                        if the trust is not used, and stock/shares sold.
+                    </div>
+                    <div>
+                        <span class="howtosubtitle">Crut or Flipcrut</span>
+                     -   Read about the differences in a crut, crat, nimcrut, flipcrut in the Valur link above.
+                        a crut will payout of the principle starting year 1 no matter if it gains or goes down. a Nimcrut only pays out when you gain, since we are
+                        only calculating 20 years here, I don't give the option, although this option is highly valuable in a life term. a flipcrut starts as a nimcrut, then turns into a normal crut.
+                        this is useful if you want to grow it for a few years, or maybe wait out volatile market conditions and not withdraw in that time. So you could flip after 1, 2, 5 years. But do not wait
+                        too long, we actually want to get paid the most we can before the trust expires.
+                    </div>
+                    <div>
+                        <span class="howtosubtitle">Years until Flip</span>
+                     -   as stated above, a good option might be waiting 1,2 or 5 years to grow the money, also this could give you time to set up other tax advantaged things like business losses reducing taxable income.
+                        but remember, we have the deduction from donating assets to the Trust, so it would be smart to not wait too long, since those deductions can only be carried 5 years.
+                    </div>
+                    <div class="howmidtitle">Chart</div>
+                    <div>
+                        <span class="howtosubtitle">Principle</span>
+                     -   The chart is only showing the amounts IF assets are donated to the CRT. NOT if you sold -> pay tax -> then get payments
+                        The principle amount after growing amount set by APY %, then the next year shows the new princple
+                        minus your payment % then + APY %.  the last year will be the amount left to your charity or DAF of choice.
+                    </div>
+                    <div>
+                        <span class="howtosubtitle">Distributions</span>
+                     -   The amount we get paid out every year
+                    </div>
+                    <div>
+                        <span class="howtosubtitle">Taxes</span>
+                     -   These are the taxes paid per year on your distributions, we already calculate the standard deduction
+                    </div>
+                    <div class="howmidtitle">Bottom Info</div>
+                    <div>The top rectangle is showing if we donated to a Trust, while the bottom shows if we sold</div>
+                    <div>
+                        <span class="howtosubtitle">Principle</span>
+                     -   The starting amount we have to invest, if you donate you have the full amount. While if you sell you pay capital gains tax first in a high % bracket
+                        then get payments starting there.
+                    </div>
+                    <div>
+                        <span class="howtosubtitle">Total Tax</span>
+                    -  The total taxes paid over 20 or x number of years if donated to the trust,  or total taxes paid if you sold the assets first then invest WITHOUT using a trust
+                    </div>
+                    <div>
+                        <span class="howtosubtitle">Highest Tax Rate</span>
+                        The tax rate paid per year on distributions from the trust, including standard deduction, or highest tax rate paid if sold the assets WITHOUT using a trust
+                    </div>
+                    <div>
+                        <span class="howtosubtitle">Average Yearly Payment</span>
+                        The payment to you per year if donated to the trust, or payment per year after selling the asset. same APY% and payments % used on both.
+                    </div>
+                    <div>
+                        <span class="howtosubtitle">Total Payments</span>
+                        The total amount paid to you over 20 years or x number of years. we compare how taking a big initial tax hit selling
+                        gives you FAR less to invest, and makes your payouts lower over 20 years to compound invest.
+                    </div>
+                </div>
+        </section>
+    </div>
+</body>
+</html>
