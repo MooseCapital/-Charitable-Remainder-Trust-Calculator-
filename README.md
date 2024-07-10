@@ -1,13 +1,26 @@
-## Charitable Remainder Trust
-![js](https://badges.aleen42.com/src/javascript.svg)
-![html](https://badges.aleen42.com/src/html5.svg)
-![css](https://badges.aleen42.com/src/css3.svg)
 
-![preview](./images/ctrust.webp)
+<div align="center">
+<h1 style="text-align: center;">Charitable Remainder Trust</h1>
+<em>Deprecated in favor of my new All in one 
+<br>
+<a href="https://github.com/MooseCapital/Charitable-Remainder-Trust">Charitable Trust Calculator</a></em>
+<br>
+  <img src="https://badges.aleen42.com/src/html5.svg" alt="html-badge">
+  <img src="https://badges.aleen42.com/src/css3.svg" alt="css-badge">
+  <img src="https://badges.aleen42.com/src/javascript.svg" alt="javascript-badge">
+<br>
+<img src="./images/ctrust.webp" width="600px" height="auto">
 
-This project is from my own interest is taxes. Charitable Remainder trust are a tool used to defer taxes while giving to charity.
+</div>
+
+<br>
+
+>  Charitable Remainder trust are a tool used to defer taxes while giving to charity.
 This reduces tax rates and lets money compound more over time. To learn more, visit and click "How to use".
 
-It has since been deprecated for a [newer project](https://github.com/MooseCapital/Charitable-Remainder-Trust) that is more modern looking and advanced, while being made in Reactjs. 
 
+<br>
 Originally created 9/22/22
+
+
+
